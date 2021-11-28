@@ -1,4 +1,4 @@
-version: "3"
+version: '3.5'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
@@ -13,29 +13,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
-      - /home/users/mkociszewski/Pobrane/magisterka/kafka/storage1:/kafka
-      - /var/run/docker.sock:/var/run/docker.sock
-  kafka-2:
-    image: wurstmeister/kafka
-    ports:
-      - "9991:9092"
-    environment:
-      DOCKER_API_VERSION: 1.22
-      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /home/users/mkociszewski/Pobrane/magisterka/kafka/storage2:/kafka
-      - /var/run/docker.sock:/var/run/docker.sock
-  kafka-3:
-    image: wurstmeister/kafka
-    ports:
-      - "9992:9092"
-    environment:
-      DOCKER_API_VERSION: 1.22
-      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /home/users/mkociszewski/Pobrane/magisterka/kafka/storage3:/kafka
+      - /home/users/mkociszewski/Pobrane/magisterka/kafka:/kafka
       - /var/run/docker.sock:/var/run/docker.sock
 
 #POLECONKA

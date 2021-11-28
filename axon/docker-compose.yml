@@ -6,3 +6,7 @@ services:
     ports:
       - '8024:8024'
       - '8124:8124'
+    volumes:
+      - /home/users/mkociszewski/Pobrane/magisterka/axonserver/data:/data
+      - /home/users/mkociszewski/Pobrane/magisterka/axonserver/events:/eventdata
+      - /home/users/mkociszewski/Pobrane/magisterka/axonserver/config:/config:ro
