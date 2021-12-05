@@ -1,9 +1,13 @@
 package com.kociszewski.axonbenchmark.axonserver;
 
 import com.opencsv.CSVWriter;
+import io.micrometer.core.instrument.Measurement;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.micrometer.GlobalMetricRegistry;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.kociszewski.axonbenchmark.common.TimeConstants.ITERATIONS;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,20 +28,30 @@ import java.util.UUID;
 public class AxonMovieController {
 
     private final CommandGateway commandGateway;
+    private final GlobalMetricRegistry globalMetricRegistry;
 
     @PostMapping("/movies")
     public void putMovies() throws IOException {
+        long start = System.currentTimeMillis();
+
         List<String[]> uuids = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             String uuid = UUID.randomUUID().toString();
             uuids.add(new String[]{uuid});
             commandGateway.send(new CreateMovieCommand(uuid));
+            if (i % 10_000 == 0) {
+                long soFar = System.currentTimeMillis();
+                long timeElapsedSoFar = soFar - start;
+                log.info("Iterations: {}, Time elapsed so far: {}ms", i, timeElapsedSoFar);
+            }
         }
+        long finish = System.currentTimeMillis();
+        long timeElapsed = finish - start;
+        log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
 
         try (CSVWriter writer = new CSVWriter(
                 new FileWriter(String.format("/home/users/mkociszewski/Pobrane/magisterka/axonserver/%s.csv", UUID.randomUUID())))) {
             writer.writeAll(uuids);
         }
-
     }
 }
