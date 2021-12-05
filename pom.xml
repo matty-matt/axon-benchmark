@@ -15,7 +15,7 @@
     <description>axon-benchmark</description>
     <properties>
         <java.version>11</java.version>
-        <axon.version>4.5.4</axon.version>
+        <axon.version>4.3.4</axon.version>
     </properties>
     <dependencies>
         <dependency>
