@@ -7,4 +7,5 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 public class CreateMovieCommand {
     @TargetAggregateIdentifier
     String movieId;
+    int iter;
 }

@@ -30,12 +30,13 @@ public class Movie {
 
     @CommandHandler
     public Movie(CreateMovieCommand command) {
-        apply(new MovieCreatedEvent(command.getMovieId()));
+        apply(new MovieCreatedEvent(command.getMovieId(), command.getIter()));
     }
 
     @EventSourcingHandler
     private void on(MovieCreatedEvent event) {
         this.movieId = event.getMovieId();
+        log.info("I have been finally created! {}", event.getIter());
     }
 
     @CommandHandler
