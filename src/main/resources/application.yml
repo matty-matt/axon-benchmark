@@ -20,4 +20,7 @@ management:
           - metric
 logging:
   file:
+    max-size: 10GB
     path: .
+  pattern:
+    console:
