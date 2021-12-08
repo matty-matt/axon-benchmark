@@ -1,9 +1,4 @@
-axon:
-  metrics:
-    auto-configuration:
-      enabled: true
-    micrometer:
-      dimensional: true
+
 management:
   endpoint:
     metrics:
@@ -22,5 +17,7 @@ logging:
   file:
     max-size: 10GB
     path: .
-  pattern:
-    console:
+#  pattern:
+#    console:
+server:
+  port: 8081

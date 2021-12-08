@@ -1,13 +1,12 @@
-package com.kociszewski.axonbenchmark;
+package com.kociszewski.kafka;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AxonBenchmarkApplication {
+public class KafkaApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AxonBenchmarkApplication.class, args);
+        SpringApplication.run(KafkaApplication.class, args);
     }
-
 }

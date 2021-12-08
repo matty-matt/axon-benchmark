@@ -1,0 +1,26 @@
+axon:
+  metrics:
+    auto-configuration:
+      enabled: true
+    micrometer:
+      dimensional: true
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - health
+          - info
+          - metric
+logging:
+  file:
+    max-size: 10GB
+    path: .
+#  pattern:
+#    console:

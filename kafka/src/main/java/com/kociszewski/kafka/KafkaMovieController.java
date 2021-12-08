@@ -1,9 +1,10 @@
-package com.kociszewski.axonbenchmark.axonserver;
+package com.kociszewski.kafka;
 
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,18 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.kociszewski.axonbenchmark.common.TimeConstants.ITERATIONS;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/axon")
+@RequestMapping("/kafka")
 @Slf4j
-public class AxonMovieController {
-
-    private final CommandGateway commandGateway;
+public class KafkaMovieController {
+    public static final long ITERATIONS = 10;
+    private final KafkaAdminClient kafkaAdmin;
 
     @PostMapping("/movies")
     public void putMovies() throws IOException {
@@ -32,7 +32,9 @@ public class AxonMovieController {
         for (int i = 0; i < ITERATIONS; i++) {
             String uuid = UUID.randomUUID().toString();
             uuids.add(new String[]{uuid});
-            commandGateway.send(new CreateMovieCommand(uuid, i));
+            // TODO wrzutka do kafki
+            kafkaAdmin.createTopics(Collections.singletonList(new NewTopic(uuid, 1, (short) 1)));
+
             if (i % 10_000 == 0) {
                 long soFar = System.currentTimeMillis();
                 long timeElapsedSoFar = soFar - start;
@@ -44,7 +46,7 @@ public class AxonMovieController {
         log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
 
         try (CSVWriter writer = new CSVWriter(
-                new FileWriter(String.format("/home/users/mkociszewski/Pobrane/magisterka/axonserver/%s.csv", UUID.randomUUID())))) {
+                new FileWriter(String.format("/home/users/mkociszewski/Pobrane/magisterka/kafka/%s.csv", UUID.randomUUID())))) {
             writer.writeAll(uuids);
         }
     }

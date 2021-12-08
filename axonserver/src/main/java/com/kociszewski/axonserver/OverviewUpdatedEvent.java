@@ -1,4 +1,4 @@
-package com.kociszewski.axonbenchmark.axonserver;
+package com.kociszewski.axonserver;
 
 import lombok.Value;
 

@@ -1,11 +1,11 @@
-package com.kociszewski.axonbenchmark.axonserver;
+package com.kociszewski.axonserver;
 
 import lombok.Value;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
 @Value
-public class CreateMovieCommand {
+public class UpdateOverviewCommand {
     @TargetAggregateIdentifier
     String movieId;
-    int iter;
+    String overview;
 }

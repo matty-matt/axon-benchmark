@@ -1,4 +1,4 @@
-package com.kociszewski.axonbenchmark.axonserver.config;
+package com.kociszewski.axonserver.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
