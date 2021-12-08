@@ -10,6 +10,23 @@ services:
       - BROKER_ID=1
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093
 
+#services:
+#  zookeeper:
+#    image: wurstmeister/zookeeper
+#    ports:
+#      - "2181:2181"
+#  kafka-1:
+#    image: wurstmeister/kafka
+#    ports:
+#      - "9990:9092"
+#    environment:
+#      DOCKER_API_VERSION: 1.22
+#      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    volumes:
+#      - /home/users/mkociszewski/Pobrane/magisterka/kafka:/kafka
+#      - /var/run/docker.sock:/var/run/docker.sock
+
 #POLECONKA
 #kafka-topics.sh --create --topic test --zookeeper 172.17.0.1:2181 --partitions 1 --replication-factor 1
 #kafka-console-producer.sh --topic test --broker-list 172.17.0.1:9990
