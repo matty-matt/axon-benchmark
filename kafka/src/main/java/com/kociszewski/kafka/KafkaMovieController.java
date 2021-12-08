@@ -3,7 +3,7 @@ package com.kociszewski.kafka;
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 public class KafkaMovieController {
     public static final long ITERATIONS = 10;
-    private final KafkaAdminClient kafkaAdmin;
+    private final AdminClient adminClient;
 
     @PostMapping("/movies")
     public void putMovies() throws IOException {
@@ -33,7 +33,7 @@ public class KafkaMovieController {
             String uuid = UUID.randomUUID().toString();
             uuids.add(new String[]{uuid});
             // TODO wrzutka do kafki
-            kafkaAdmin.createTopics(Collections.singletonList(new NewTopic(uuid, 1, (short) 1)));
+            adminClient.createTopics(Collections.singletonList(new NewTopic(uuid, 1, (short) 1)));
 
             if (i % 10_000 == 0) {
                 long soFar = System.currentTimeMillis();

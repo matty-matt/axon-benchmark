@@ -1,6 +1,7 @@
 package com.kociszewski.kafka.config;
 
 import com.kociszewski.kafka.KafkaMessage;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -56,5 +57,10 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
+    }
+
+    @Bean
+    public AdminClient adminClient(KafkaAdmin kafkaAdmin) {
+        return AdminClient.create(kafkaAdmin.getConfigurationProperties());
     }
 }
