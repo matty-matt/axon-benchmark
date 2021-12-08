@@ -1,5 +1,5 @@
 kafka:
-  bootstrap-address: localhost:9990
+  bootstrap-address: localhost:9092
 logging:
   file:
     max-size: 10GB
