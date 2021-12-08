@@ -1,20 +1,5 @@
 kafka:
   bootstrap-address: localhost:9990
-
-management:
-  endpoint:
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include:
-          - prometheus
-          - health
-          - info
-          - metric
 logging:
   file:
     max-size: 10GB

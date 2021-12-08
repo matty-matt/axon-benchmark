@@ -22,11 +22,6 @@
             <artifactId>axon-spring-boot-starter</artifactId>
             <version>${axon.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.axonframework</groupId>
-            <artifactId>axon-micrometer</artifactId>
-            <version>${axon.version}</version>
-        </dependency>
     </dependencies>
 
 </project>
