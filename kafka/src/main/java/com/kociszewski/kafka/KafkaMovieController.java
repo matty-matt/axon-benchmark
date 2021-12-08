@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +22,9 @@ import java.util.UUID;
 @RequestMapping("/kafka")
 @Slf4j
 public class KafkaMovieController {
-    public static final long ITERATIONS = 10;
+    private static final long ITERATIONS = 10000;
     private final AdminClient adminClient;
+    private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
 
     @PostMapping("/movies")
     public void putMovies() throws IOException {
@@ -32,8 +34,9 @@ public class KafkaMovieController {
         for (int i = 0; i < ITERATIONS; i++) {
             String uuid = UUID.randomUUID().toString();
             uuids.add(new String[]{uuid});
-            // TODO wrzutka do kafki
+
             adminClient.createTopics(Collections.singletonList(new NewTopic(uuid, 1, (short) 1)));
+//            kafkaTemplate.send(uuid, new CreateMovieCommand(uuid, i));
 
             if (i % 10_000 == 0) {
                 long soFar = System.currentTimeMillis();

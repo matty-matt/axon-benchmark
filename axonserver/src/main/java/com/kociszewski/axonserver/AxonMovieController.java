@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping("/axon")
 @Slf4j
 public class AxonMovieController {
-    public static final long ITERATIONS = 10;
+    private static final long ITERATIONS = 10;
     private final CommandGateway commandGateway;
 
     @PostMapping("/movies")

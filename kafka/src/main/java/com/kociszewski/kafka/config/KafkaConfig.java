@@ -1,6 +1,6 @@
 package com.kociszewski.kafka.config;
 
-import com.kociszewski.kafka.KafkaMessage;
+import com.kociszewski.kafka.CreateMovieCommand;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -31,7 +31,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, KafkaMessage> producerFactory() {
+    public ProducerFactory<String, CreateMovieCommand> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -40,21 +40,21 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, KafkaMessage> kafkaTemplate() {
+    public KafkaTemplate<String, CreateMovieCommand> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, KafkaMessage> consumerFactory() {
+    public ConsumerFactory<String, CreateMovieCommand> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-mkociszewski");
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(KafkaMessage.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>(CreateMovieCommand.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, CreateMovieCommand> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CreateMovieCommand> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
