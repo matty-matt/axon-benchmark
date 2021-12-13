@@ -9,6 +9,9 @@ services:
       - CLUSTER_ID=oh-sxaDRTcyAr6pFRbXyzA
       - BROKER_ID=1
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093
+    volumes:
+      - /home/users/mkociszewski/Pobrane/magisterka/kafka/data:/kafka/data
+      - /home/users/mkociszewski/Pobrane/magisterka/kafka/logs:/kafka/logs
 
 #services:
 #  zookeeper:
@@ -18,13 +21,14 @@ services:
 #  kafka-1:
 #    image: wurstmeister/kafka
 #    ports:
-#      - "9990:9092"
+#      - "9092:9092"
 #    environment:
 #      DOCKER_API_VERSION: 1.22
 #      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
 #      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 #    volumes:
-#      - /home/users/mkociszewski/Pobrane/magisterka/kafka:/kafka
+#      - /home/users/mkociszewski/Pobrane/magisterka/kafka/data:/kafka
+#      - /home/users/mkociszewski/Pobrane/magisterka/kafka/logs:/opt/kafka/logs
 #      - /var/run/docker.sock:/var/run/docker.sock
 
 #POLECONKA
