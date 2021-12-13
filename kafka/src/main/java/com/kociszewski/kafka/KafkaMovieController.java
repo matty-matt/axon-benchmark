@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,9 +22,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/kafka")
 @Slf4j
 public class KafkaMovieController {
-    private static final long ITERATIONS = 100;
+    private static final long ITERATIONS = 1;
     private final AdminClient adminClient;
     private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
+    private final MovieConsumerFactory consumerFactory;
+    private final ExecutorService executor = Executors.newFixedThreadPool(8);
 
     @PostMapping("/topics")
     public String createTopics() throws IOException {
@@ -39,6 +43,10 @@ public class KafkaMovieController {
             }
         }
         adminClient.createTopics(uuids.stream().map(uuid -> new NewTopic(uuid, 1, (short) 1)).collect(Collectors.toList()));
+
+        executor.submit(() -> {
+            uuids.forEach(consumerFactory::createAndRun);
+        });
 
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
