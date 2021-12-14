@@ -36,3 +36,8 @@ services:
 #kafka-console-producer.sh --topic test --broker-list 172.17.0.1:9990
 #kafka-console-consumer.sh --topic test --bootstrap-server 172.17.0.1:9990 --from-beginning
 #docker-compose exec kafka-1 bash -c "/kafka/bin/kafka-topics.sh --bootstrap-server kafka-1:9092 --list | wc -l"
+
+
+#  CSV_FILE="$(curl -X POST http://localhost:8081/kafka/topics/3)"
+#  curl -X POST http://localhost:8081/kafka/consume/ -F "file=$CSV_FILE"
+#  curl -X POST http://localhost:8081/kafka/movies/ -F "file=$CSV_FILE"

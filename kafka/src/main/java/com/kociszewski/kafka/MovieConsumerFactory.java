@@ -27,7 +27,9 @@ public class MovieConsumerFactory {
         try (consumer) {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                records.forEach(record -> System.out.println("Przeczytanko " + record.value()));
+                records.forEach(record -> {
+                    log.info("Przeczytanko, record={}, consumer={}", record.value(), consumer.hashCode());
+                });
             }
         }
     }
