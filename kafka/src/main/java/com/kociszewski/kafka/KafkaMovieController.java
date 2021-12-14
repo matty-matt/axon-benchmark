@@ -1,5 +1,6 @@
 package com.kociszewski.kafka;
 
+import com.kociszewski.kafka.model.CreateMovieCommand;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;

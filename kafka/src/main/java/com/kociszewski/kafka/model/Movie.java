@@ -1,4 +1,4 @@
-package com.kociszewski.kafka;
+package com.kociszewski.kafka.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

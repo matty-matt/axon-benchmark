@@ -1,6 +1,6 @@
 package com.kociszewski.kafka.config;
 
-import com.kociszewski.kafka.CreateMovieCommand;
+import com.kociszewski.kafka.model.CreateMovieCommand;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
