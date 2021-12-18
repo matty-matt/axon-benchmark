@@ -24,6 +24,20 @@ public class KafkaMovieController {
     private final AdminClient adminClient;
     private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
 
+    @PostMapping("/generate/{iterations}")
+    public String generateCsvs(@PathVariable int iterations) throws IOException {
+        List<String> uuids = new ArrayList<>();
+        for (int i = 0; i < iterations; i++) {
+            String uuid = UUID.randomUUID().toString();
+            uuids.add(uuid);
+        }
+        String csvName = String.format("/home/users/mkociszewski/Pobrane/magisterka/kafka/%s", UUID.randomUUID().toString().concat(".csv"));
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvName))) {
+            writer.writeAll(uuids.stream().map(uuid -> new String[]{uuid}).collect(Collectors.toList()));
+        }
+        return "@".concat(csvName);
+    }
+
     @PostMapping("/topics/{iterations}")
     public String createTopics(@PathVariable int iterations) throws IOException {
         long start = System.currentTimeMillis();
