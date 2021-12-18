@@ -14,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
 public class KafkaMovieController {
     private final AdminClient adminClient;
     private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
-    private final MovieConsumerFactory consumerFactory;
-    private final ExecutorService executor = Executors.newFixedThreadPool(8);
 
     @PostMapping("/topics/{iterations}")
     public String createTopics(@PathVariable int iterations) throws IOException {
@@ -53,22 +49,6 @@ public class KafkaMovieController {
             writer.writeAll(uuids.stream().map(uuid -> new String[]{uuid}).collect(Collectors.toList()));
         }
         return "@".concat(csvName);
-    }
-
-    @PostMapping("/consume")
-    public void consume(@RequestParam("file") MultipartFile file) throws IOException, CsvException {
-        long start = System.currentTimeMillis();
-
-        CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));
-        List<String> uuids = csvReader.readAll().stream().map(uuid -> uuid[0]).collect(Collectors.toList());
-
-        for (String uuid : uuids) {
-            executor.execute(()->consumerFactory.createAndRun(uuid));
-        }
-
-        long finish = System.currentTimeMillis();
-        long timeElapsed = finish - start;
-        log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
     }
 
     @PostMapping("/movies")
