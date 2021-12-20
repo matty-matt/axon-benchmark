@@ -1,19 +1,18 @@
 package com.kociszewski.kafka;
 
-import com.kociszewski.kafka.model.CreateMovieCommand;
 import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,25 +20,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/kafka")
 @Slf4j
 public class KafkaMovieController {
-    private final AdminClient adminClient;
-    private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
+    private final KafkaService kafkaService;
 
-    @PostMapping("/generate/{iterations}")
-    public String generateCsvs(@PathVariable int iterations) throws IOException {
+    @PostMapping("/topics/{iterations}")
+    public String createTopics(@PathVariable int iterations) throws IOException {
+        long start = System.currentTimeMillis();
         List<String> uuids = new ArrayList<>();
         for (int i = 0; i < iterations; i++) {
             String uuid = UUID.randomUUID().toString();
             uuids.add(uuid);
+            if (i % 10_000 == 0) {
+                long soFar = System.currentTimeMillis();
+                long timeElapsedSoFar = soFar - start;
+                log.info("Iterations: {}, Time elapsed so far: {}ms", i, timeElapsedSoFar);
+            }
         }
-        String csvName = String.format("/home/users/mkociszewski/Pobrane/magisterka/kafka/%s", UUID.randomUUID().toString().concat(".csv"));
-        try (CSVWriter writer = new CSVWriter(new FileWriter(csvName))) {
-            writer.writeAll(uuids.stream().map(uuid -> new String[]{uuid}).collect(Collectors.toList()));
-        }
-        return "@".concat(csvName);
+        kafkaService.createTopics(uuids);
+        return kafkaService.generateCsv(uuids);
     }
 
-    @PostMapping("/topics/{iterations}")
-    public String createTopics(@PathVariable int iterations) throws IOException {
+    @PostMapping("/full/{iterations}")
+    public String fullService(@PathVariable int iterations) throws IOException {
+        kafkaService.stopConsumers();
         long start = System.currentTimeMillis();
 
         List<String> uuids = new ArrayList<>();
@@ -52,17 +54,19 @@ public class KafkaMovieController {
                 log.info("Iterations: {}, Time elapsed so far: {}ms", i, timeElapsedSoFar);
             }
         }
-        adminClient.createTopics(uuids.stream().map(uuid -> new NewTopic(uuid, 1, (short) 1)).collect(Collectors.toList()));
+        CreateTopicsResult result = kafkaService.createTopics(uuids);
 
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
 
-        String csvName = String.format("/home/users/mkociszewski/Pobrane/magisterka/kafka/%s", UUID.randomUUID().toString().concat(".csv"));
-        try (CSVWriter writer = new CSVWriter(new FileWriter(csvName))) {
-            writer.writeAll(uuids.stream().map(uuid -> new String[]{uuid}).collect(Collectors.toList()));
-        }
-        return "@".concat(csvName);
+        result.all().whenComplete((a, b) -> {
+            log.info("COMPLETE CREATING TOPICS");
+            kafkaService.startConsumers();
+            kafkaService.sendMany(uuids);
+        });
+
+        return kafkaService.generateCsv(uuids);
     }
 
     @PostMapping("/movies")
@@ -72,9 +76,7 @@ public class KafkaMovieController {
         CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));
         List<String> uuids = csvReader.readAll().stream().map(uuid -> uuid[0]).collect(Collectors.toList());
 
-        for (int i = 0; i < uuids.size(); i++) {
-            kafkaTemplate.send(uuids.get(i), new CreateMovieCommand(uuids.get(i), i));
-        }
+        kafkaService.sendMany(uuids);
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
