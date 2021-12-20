@@ -71,6 +71,8 @@ public class KafkaMovieController {
 
     @PostMapping("/movies")
     public void putMovies(@RequestParam("file") MultipartFile file) throws IOException, CsvException {
+        kafkaService.stopConsumers();
+
         long start = System.currentTimeMillis();
 
         CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()));
@@ -80,5 +82,6 @@ public class KafkaMovieController {
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         log.info("FINISHED, Time elapsed: {}ms", timeElapsed);
+        kafkaService.startConsumers();
     }
 }

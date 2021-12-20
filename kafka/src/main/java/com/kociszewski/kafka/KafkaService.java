@@ -32,6 +32,7 @@ public class KafkaService {
 
     public void sendMany(List<String> topics) {
         for (int i = 0; i < topics.size(); i++) {
+            log.info("Sending {} message", i);
             kafkaTemplate.send(topics.get(i), new CreateMovieCommand(topics.get(i), i));
         }
     }
