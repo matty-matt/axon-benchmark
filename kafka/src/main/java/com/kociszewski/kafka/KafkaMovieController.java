@@ -55,6 +55,7 @@ public class KafkaMovieController {
             }
         }
         CreateTopicsResult result = kafkaService.createTopics(uuids);
+        kafkaService.sendMany(uuids);
 
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
@@ -63,7 +64,6 @@ public class KafkaMovieController {
         result.all().whenComplete((a, b) -> {
             log.info("COMPLETE CREATING TOPICS");
             kafkaService.startConsumers();
-            kafkaService.sendMany(uuids);
         });
 
         return kafkaService.generateCsv(uuids);
