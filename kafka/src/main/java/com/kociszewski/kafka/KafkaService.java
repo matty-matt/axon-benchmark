@@ -16,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +27,7 @@ public class KafkaService {
     private final AdminClient adminClient;
     private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
     private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final ExecutorService executor = Executors.newFixedThreadPool(8);
 
     public CreateTopicsResult createTopics(List<String> topics) {
         return adminClient.createTopics(topics.stream().map(topic -> new NewTopic(topic, 1, (short) 1)).collect(Collectors.toList()));
@@ -33,7 +36,9 @@ public class KafkaService {
     public void sendMany(List<String> topics) {
         for (int i = 0; i < topics.size(); i++) {
             log.info("Sending {} message", i);
-            kafkaTemplate.send(topics.get(i), new CreateMovieCommand(topics.get(i), i));
+            int finalI = i;
+            executor.execute(() -> kafkaTemplate.send(topics.get(finalI), new CreateMovieCommand(topics.get(finalI), finalI)));
+//            kafkaTemplate.send(topics.get(i), new CreateMovieCommand(topics.get(i), i));
         }
     }
 
