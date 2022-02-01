@@ -36,7 +36,7 @@ public class Movie {
     @EventSourcingHandler
     private void on(MovieCreatedEvent event) {
         this.movieId = event.getMovieId();
-        log.info("I have been finally created! {}", event.getIter());
+        log.info("Read, record={}", event);
     }
 
     @CommandHandler

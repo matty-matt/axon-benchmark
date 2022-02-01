@@ -12,6 +12,6 @@ public class MovieConsumer {
             topicPattern = ".*",
             containerFactory = "kafkaListenerContainerFactory")
     public void consume(CreateMovieCommand command) {
-        log.info("Przeczytanko, record={}", command);
+        log.info("Read, record={}", command);
     }
 }

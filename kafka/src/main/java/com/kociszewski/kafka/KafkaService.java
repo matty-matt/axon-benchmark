@@ -27,7 +27,7 @@ public class KafkaService {
     private final AdminClient adminClient;
     private final KafkaTemplate<String, CreateMovieCommand> kafkaTemplate;
     private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
-    private final ExecutorService executor = Executors.newFixedThreadPool(8);
+//    private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
     public CreateTopicsResult createTopics(List<String> topics) {
         return adminClient.createTopics(topics.stream().map(topic -> new NewTopic(topic, 1, (short) 1)).collect(Collectors.toList()));
@@ -36,9 +36,9 @@ public class KafkaService {
     public void sendMany(List<String> topics) {
         for (int i = 0; i < topics.size(); i++) {
             log.info("Sending {} message", i);
-            int finalI = i;
-            executor.execute(() -> kafkaTemplate.send(topics.get(finalI), new CreateMovieCommand(topics.get(finalI), finalI)));
-//            kafkaTemplate.send(topics.get(i), new CreateMovieCommand(topics.get(i), i));
+//            int finalI = i;
+//            executor.execute(() -> kafkaTemplate.send(topics.get(finalI), new CreateMovieCommand(topics.get(finalI), finalI)));
+            kafkaTemplate.send(topics.get(i), new CreateMovieCommand(topics.get(i), i));
         }
     }
 

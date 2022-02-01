@@ -40,7 +40,7 @@ public class KafkaMovieController {
     }
 
     @PostMapping("/full/{iterations}")
-    public String fullService(@PathVariable int iterations) throws IOException {
+    public void putAndConsumeMovies(@PathVariable int iterations) throws IOException {
         kafkaService.stopConsumers();
         long start = System.currentTimeMillis();
 
@@ -65,8 +65,6 @@ public class KafkaMovieController {
             log.info("COMPLETE CREATING TOPICS");
             kafkaService.startConsumers();
         });
-
-        return kafkaService.generateCsv(uuids);
     }
 
     @PostMapping("/movies")
